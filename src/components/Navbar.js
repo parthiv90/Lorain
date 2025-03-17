@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Badge, Drawer, List, ListItem, ListItemText, Container, useMediaQuery, useTheme, Menu, MenuItem, Avatar } from '@mui/material';
+import { AppBar, Toolbar,Typography, Button, IconButton, Badge, Drawer, List, ListItem, ListItemText, Container, useMediaQuery, useTheme, Menu, MenuItem, Avatar } from '@mui/material';
 import { ShoppingCart, Menu as MenuIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
@@ -76,18 +77,18 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
   );
 
   return (
-    <AppBar position="static" color="primary" sx={{ mb: 4 }}>
-      <Container>
-        <Toolbar disableGutters>
-          {isMobile && (
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-              onClick={toggleDrawer(true)}
-            >
+    <AppBar position="static" sx={{ backgroundColor: 'black', mb: 4 }}>
+  <Container>
+    <Toolbar disableGutters>
+      {isMobile && (
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+          onClick={toggleDrawer(true)}
+        >
               <MenuIcon />
             </IconButton>
           )}
@@ -98,13 +99,20 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
             to="/"
             sx={{
               flexGrow: 1,
+              fontFamily:'"Bodoni Moda", serif',
+              fontSize:'34px',
+              fontWeight: '400',
+              // fontStyle: 'normal',
               textDecoration: 'none',
+              fontOpticalSizing: 'auto',
               color: 'inherit',
-              fontWeight: 'bold',
             }}
           >
-            FASHION STORE
+            LORAIN
           </Typography>
+          {/* <div>
+             <img src='./public/Lorain(1).png'></img>
+          </div> */}
 
           {!isMobile && (
             <div style={{ display: 'flex' }}>

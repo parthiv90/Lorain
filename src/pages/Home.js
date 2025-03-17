@@ -210,7 +210,7 @@ const Home = ({ addToCart }) => {
               <Box
                 sx={{
                   height: '400px',
-                  backgroundImage: 'url(https://images.unsplash.com/photo-1581044777550-4cfa60707c03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)',
+                  backgroundImage: 'url(https://plus.unsplash.com/premium_photo-1713586580802-854a58542159?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDV8fHdvbWFucyUyMGNvbGxlY3Rpb258ZW58MHx8MHx8fDA%3D?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: 2,

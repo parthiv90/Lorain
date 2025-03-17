@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardMedia, CardContent, Typography, CardActions, Button, Rating, Box, Chip } from '@mui/material';
 import { ShoppingCart } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 // Fallback images for when product images are not available
 const fallbackImages = {
