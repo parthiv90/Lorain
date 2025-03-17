@@ -172,7 +172,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
+      <Router basename="/Fashion-web">
         <div className="App">
           <Navbar 
             cartItemCount={cart.reduce((total, item) => total + item.quantity, 0)} 
