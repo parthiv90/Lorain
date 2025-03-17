@@ -20,7 +20,7 @@ import Profile from './pages/Profile';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#000000',
     },
     secondary: {
       main: '#f50057',

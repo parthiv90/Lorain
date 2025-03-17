@@ -15,8 +15,16 @@ const Footer = () => {
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-              FASHION STORE
+            <Typography variant="h6" gutterBottom sx={{  
+              flexGrow: 1,
+              fontFamily:'"Bodoni Moda", serif',
+              fontSize:'34px',
+              fontWeight: '400',
+              // fontStyle: 'normal',
+              textDecoration: 'none',
+              fontOpticalSizing: 'auto',
+              color: 'inherit', }}>
+              LORAIN
             </Typography>
             <Typography variant="body2" sx={{ mb: 2 }}>
               Your one-stop destination for trendy men's and women's clothing. We offer the latest styles at affordable prices.

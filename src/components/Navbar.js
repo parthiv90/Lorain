@@ -110,9 +110,6 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
           >
             LORAIN
           </Typography>
-          {/* <div>
-             <img src='./public/Lorain(1).png'></img>
-          </div> */}
 
           {!isMobile && (
             <div style={{ display: 'flex' }}>
