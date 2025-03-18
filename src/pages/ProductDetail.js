@@ -316,36 +316,26 @@ const ProductDetail = ({ addToCart }) => {
         </Grid>
       </Grid>
 
-      <Box sx={{ mt: 8 }}>
-        <Typography
-          variant="h5"
-          component="h2"
-          gutterBottom
-          sx={{
-            fontWeight: "bold",
-            textAlign: "center",
-            position: "relative",
-            mb: 4,
-            "&::after": {
-              content: '""',
-              display: "block",
-              width: "50px",
-              height: "3px",
-              backgroundColor: "primary.main",
-              margin: "8px auto",
-            },
-          }}
-        >
-          You May Also Like
-        </Typography>
+      <Typography
+        variant="h4"
+        component="h2"
+        textAlign="center"
+        gutterBottom
+        fontWeight="bold"
+        sx={{
+          my: 5,
+          position: "relative",
+        }}
+      >
+        You May Also Like
+      </Typography>
 
-        <ProductList
-          products={relatedProducts}
-          title=""
-          addToCart={addToCart}
-          totalProducts={relatedProducts.length}
-        />
-      </Box>
+      <ProductList
+        products={relatedProducts}
+        title=""
+        addToCart={addToCart}
+        totalProducts={relatedProducts.length}
+      />
 
       <Snackbar
         open={openSnackbar}

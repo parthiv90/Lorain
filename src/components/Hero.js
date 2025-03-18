@@ -7,10 +7,13 @@ const Hero = () => {
     <Box
       sx={{
         position: 'relative',
-        height: { xs: '60vh', md: '80vh' },
-        backgroundImage: 'url(https://plus.unsplash.com/premium_photo-1664202525979-80d1da46b34b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTk3fHxmYXNoaW9ufGVufDB8fDB8fHww?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80)',
+        height: { xs: '70vh', sm: '75vh', md: '80vh' },
+        backgroundImage: {
+          xs: 'url("https://images.unsplash.com/photo-1718985342149-7178154e0aee?w=2500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fGNsb3RoaW5nJTIwc3RvcmV8ZW58MHx8MHx8fDA%3D")',
+          md: 'url("https://images.unsplash.com/photo-1718985342149-7178154e0aee?w=2500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDB8fGNsb3RoaW5nJTIwc3RvcmV8ZW58MHx8MHx8fDA%3D")'
+        },
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: { xs: 'top center', md: 'center' },
         display: 'flex',
         alignItems: 'center',
         mb: 6,
@@ -21,7 +24,7 @@ const Hero = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
         }
       }}
     >

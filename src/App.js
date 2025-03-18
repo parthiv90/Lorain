@@ -15,6 +15,7 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
+import About from './pages/About';
 
 // Create a theme
 const theme = createTheme({
@@ -23,22 +24,34 @@ const theme = createTheme({
       main: '#000000',
     },
     secondary: {
-      main: '#f50057',
+      main: '#c9a66b', // Gold accent for luxury feel
+    },
+    background: {
+      default: '#ffffff',
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#000000',
+      secondary: '#737373',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Cormorant Garamond", "Playfair Display", "Times New Roman", serif',
     h1: {
-      fontWeight: 700,
+      fontWeight: 600,
+      letterSpacing: 1,
     },
     h2: {
-      fontWeight: 700,
+      fontWeight: 600,
+      letterSpacing: 0.5,
     },
     h3: {
-      fontWeight: 600,
+      fontWeight: 500,
+      letterSpacing: 0.5,
     },
     h4: {
-      fontWeight: 600,
+      fontWeight: 500,
+      letterSpacing: 0.5,
     },
     h5: {
       fontWeight: 500,
@@ -46,20 +59,68 @@ const theme = createTheme({
     h6: {
       fontWeight: 500,
     },
+    subtitle1: {
+      letterSpacing: 0.5,
+    },
+    body1: {
+      letterSpacing: 0.5,
+    },
+    button: {
+      fontWeight: 500,
+      letterSpacing: 1,
+    },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 4,
+          borderRadius: 0,
+          textTransform: 'uppercase',
+          padding: '10px 24px',
+        },
+        contained: {
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: 'none',
+          },
+        },
+        outlined: {
+          borderWidth: '1px',
+          '&:hover': {
+            borderWidth: '1px',
+          },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          borderRadius: 0,
+          boxShadow: 'none',
+          border: '1px solid #f0f0f0',
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: '#e0e0e0',
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 0,
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 0,
         },
       },
     },
@@ -204,6 +265,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+              <Route path="/about" element={<About />} />
             </Routes>
           </main>
           <Footer />

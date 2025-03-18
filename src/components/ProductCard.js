@@ -42,28 +42,33 @@ const ProductCard = ({ product, addToCart }) => {
         height: '100%', 
         display: 'flex', 
         flexDirection: 'column',
-        transition: 'transform 0.3s, box-shadow 0.3s',
+        transition: 'all 0.3s',
+        borderRadius: 0,
+        border: '1px solid #f0f0f0',
+        boxShadow: 'none',
+        position: 'relative',
         '&:hover': {
           transform: 'translateY(-5px)',
-          boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
-          cursor: 'pointer'
+          boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
+          cursor: 'pointer',
+          '& .MuiCardMedia-root': {
+            transform: 'scale(1.03)',
+            transition: 'transform 0.6s ease'
+          }
         }
       }}
       onClick={handleCardClick}
     >
-      <Box sx={{ position: 'relative' }}>
+      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
         <CardMedia
           component="img"
-          height="250"
+          height="300"
           image={getImageSource()}
           alt={name}
           onError={handleImageError}
           sx={{ 
             objectFit: 'cover',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.05)'
-            }
+            transition: 'transform 0.5s ease',
           }}
         />
         <Chip 
@@ -74,7 +79,12 @@ const ProductCard = ({ product, addToCart }) => {
             position: 'absolute', 
             top: 10, 
             left: 10,
-            textTransform: 'capitalize'
+            textTransform: 'uppercase',
+            fontWeight: 400,
+            fontSize: '0.7rem',
+            letterSpacing: 0.5,
+            borderRadius: 0,
+            backgroundColor: 'rgba(0,0,0,0.7)'
           }} 
         />
         {!inStock && (
@@ -85,7 +95,12 @@ const ProductCard = ({ product, addToCart }) => {
             sx={{ 
               position: 'absolute', 
               top: 10, 
-              right: 10 
+              right: 10,
+              borderRadius: 0,
+              textTransform: 'uppercase',
+              fontWeight: 400,
+              fontSize: '0.7rem',
+              letterSpacing: 0.5
             }} 
           />
         )}
@@ -97,31 +112,66 @@ const ProductCard = ({ product, addToCart }) => {
           variant="h6" 
           component="div" 
           sx={{ 
-            fontWeight: 'bold',
+            fontFamily: '"Cormorant Garamond", serif',
+            fontWeight: '500',
             height: '3em',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
             WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical'
+            WebkitBoxOrient: 'vertical',
+            fontSize: '1.1rem',
+            letterSpacing: 0.5,
+            mb: 1
           }}
         >
           {name}
         </Typography>
         
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Rating value={rating} precision={0.5} size="small" readOnly />
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+          <Rating 
+            value={rating} 
+            precision={0.5} 
+            size="small" 
+            readOnly 
+            sx={{ 
+              color: 'primary.main',
+              '& .MuiRating-iconFilled': {
+                color: '#d4af37',
+              },
+              '& .MuiRating-iconEmpty': {
+                color: 'rgba(212, 175, 55, 0.3)',
+              }
+            }}
+          />
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            sx={{ 
+              ml: 1, 
+              fontFamily: '"Poppins", sans-serif',
+              fontSize: '0.75rem'
+            }}
+          >
             ({rating})
           </Typography>
         </Box>
         
-        <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold' }}>
+        <Typography 
+          variant="h6" 
+          color="primary" 
+          sx={{ 
+            fontFamily: '"Cormorant Garamond", serif',
+            fontWeight: '600',
+            letterSpacing: 0.5,
+            fontSize: '1.2rem'
+          }}
+        >
           ₹{price.toLocaleString('en-IN')}
         </Typography>
       </CardContent>
       
-      <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+      <CardActions sx={{ justifyContent: 'flex-end', p: 2, pt: 0 }}>
         <Button 
           variant="contained" 
           size="small" 
@@ -131,7 +181,24 @@ const ProductCard = ({ product, addToCart }) => {
             addToCart(product);
           }}
           disabled={!inStock}
-          sx={{ textTransform: 'none' }}
+          sx={{ 
+            textTransform: 'none',
+            fontFamily: '"Poppins", sans-serif',
+            borderRadius: 0,
+            px: 2,
+            letterSpacing: 0.5,
+            fontWeight: 400,
+            boxShadow: 'none',
+            backgroundColor: 'black',
+            '&:hover': {
+              backgroundColor: '#333',
+              boxShadow: 'none'
+            },
+            '&.Mui-disabled': {
+              backgroundColor: '#e0e0e0',
+              color: '#9e9e9e'
+            }
+          }}
         >
           Add to Cart
         </Button>

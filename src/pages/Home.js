@@ -13,6 +13,8 @@ const Home = ({ addToCart }) => {
 
   return (
     <div>
+      {/* Removing the Spring Collection video section */}
+      
       <Hero />
       
       <Container>
@@ -66,6 +68,107 @@ const Home = ({ addToCart }) => {
           </Grid>
         </Box>
         
+        {/* Fashion Video Section */}
+        <Box 
+          sx={{ 
+            width: '100%', 
+            height: { xs: '400px', sm: '500px', md: '600px' },
+            position: 'relative',
+            overflow: 'hidden',
+            mb: 8,
+            mt: 8
+          }}
+        >
+          <Box
+            component="video"
+            src="https://videos.pexels.com/video-files/4825045/4825045-uhd_2560_1440_30fps.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            sx={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              filter: 'brightness(0.75)',
+            }}
+          />
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              px: 2,
+            }}
+          >
+            <Typography
+              variant="h3"
+              component="h2"
+              color="white"
+              sx={{
+                textAlign: 'center',
+                fontFamily: '"Bodoni Moda", serif',
+                fontWeight: '600',
+                mb: 3,
+                textShadow: '1px 1px 3px rgba(0,0,0,0.3)',
+                fontSize: { xs: '1rem', sm: '2.8rem', md: '3.5rem' },
+                letterSpacing: 4,
+                textTransform: 'uppercase',
+              }}
+            >
+              Style Redefined
+            </Typography>
+            <Typography
+              variant="body1"
+              color="white"
+              sx={{
+                textAlign: 'center',
+                fontFamily: '"Cormorant Garamond", serif',
+                mb: 5,
+                maxWidth: '700px',
+                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem' },
+                letterSpacing: 1,
+                fontWeight: '400',
+              }}
+            >
+              Experience elegance and sophistication with our carefully curated collection
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              component={Link}
+              to="/category/women"
+              sx={{
+                px: 6,
+                py: 1.5,
+                color: 'black',
+                bgcolor: 'white',
+                borderRadius: 0,
+                fontWeight: '600',
+                letterSpacing: 1,
+                fontSize: '0.9rem',
+                textTransform: 'uppercase',
+                boxShadow: 'none',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.9)',
+                  boxShadow: 'none',
+                }
+              }}
+            >
+              Discover Collection
+            </Button>
+          </Box>
+        </Box>
+        
         {/* Featured Products Section */}
         <Box sx={{ mb: 8 }}>
           <Typography 
@@ -73,17 +176,20 @@ const Home = ({ addToCart }) => {
             component="h2" 
             gutterBottom 
             sx={{ 
-              fontWeight: 'bold',
+              fontWeight: '600',
               textAlign: 'center',
               position: 'relative',
               mb: 5,
+              fontSize: '1.8rem',
+              letterSpacing: 2,
+              textTransform: 'uppercase',
               '&::after': {
                 content: '""',
                 display: 'block',
-                width: '50px',
-                height: '3px',
-                backgroundColor: 'primary.main',
-                margin: '8px auto',
+                width: '40px',
+                height: '2px',
+                backgroundColor: 'black',
+                margin: '16px auto',
               }
             }}
           >
@@ -144,7 +250,7 @@ const Home = ({ addToCart }) => {
               <Box
                 sx={{
                   height: '400px',
-                  backgroundImage: 'url(https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)',
+                  backgroundImage: 'url(https://images.unsplash.com/photo-1737994874349-9da316080f17?q=80&w=2500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: 2,
@@ -190,7 +296,7 @@ const Home = ({ addToCart }) => {
               </Typography>
               <Button 
                 variant="contained" 
-                color="primary" 
+                color="primary"   h
                 size="large" 
                 component={Link} 
                 to="/category/women"
@@ -209,11 +315,14 @@ const Home = ({ addToCart }) => {
             <Grid item xs={12} md={6}>
               <Box
                 sx={{
-                  height: '400px',
-                  backgroundImage: 'url(https://plus.unsplash.com/premium_photo-1713586580802-854a58542159?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDV8fHdvbWFucyUyMGNvbGxlY3Rpb258ZW58MHx8MHx8fDA%3D?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80)',
+                  height: { xs: '300px', md: '400px' },
+                  width: '100%',
+                  backgroundImage: 'url(https://images.pexels.com/photos/10131764/pexels-photo-10131764.jpeg?auto=compress&cs=tinysrgb&w=2500)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: 2,
+                  mb: { xs: 3, md: 0 },
+                  display: 'block',
                 }}
               />
             </Grid>

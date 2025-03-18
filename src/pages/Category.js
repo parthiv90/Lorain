@@ -31,7 +31,7 @@ const Category = ({ addToCart }) => {
     <Container sx={{ mt: 4, mb: 8 }}>
       <Box sx={{ mb: 4 }}>
         <Breadcrumbs aria-label="breadcrumb">
-          <Link underline="hover" color="inherit" href="/">
+          <Link underline="hover" color="inherit" href="/Fashion-web">
             Home
           </Link>
           <Typography color="text.primary">{categoryName}</Typography>

@@ -22,26 +22,28 @@ const ProductList = ({
   return (
     <Container>
       <Box sx={{ mb: 4 }}>
-        <Typography 
-          variant="h4" 
-          component="h2" 
-          gutterBottom 
-          sx={{ 
-            fontWeight: 'bold',
-            textAlign: 'center',
-            position: 'relative',
-            '&::after': {
-              content: '""',
-              display: 'block',
-              width: '50px',
-              height: '3px',
-              backgroundColor: 'primary.main',
-              margin: '8px auto',
-            }
-          }}
-        >
-          {title}
-        </Typography>
+        {title && (
+          <Typography 
+            variant="h4" 
+            component="h2" 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 'bold',
+              textAlign: 'center',
+              position: 'relative',
+              '&::after': title ? {
+                content: '""',
+                display: 'block',
+                width: '50px',
+                height: '3px',
+                backgroundColor: 'primary.main',
+                margin: '8px auto',
+              } : {}
+            }}
+          >
+            {title}
+          </Typography>
+        )}
       </Box>
 
       {products.length === 0 ? (
