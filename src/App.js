@@ -132,66 +132,18 @@ function App() {
   const [cart, setCart] = useState([]);
   // State for user
   const [user, setUser] = useState(null);
-  // State for loading authentication status
-  const [authLoading, setAuthLoading] = useState(true);
 
-  // Check if token is valid by making a request to the server
-  const checkTokenValidity = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setAuthLoading(false);
-      return;
-    }
-    
-    try {
-      const response = await fetch('http://localhost:3001/auth/verify-token', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response.ok) {
-        // Token is valid, get user data
-        const userData = await response.json();
-        setUser(userData.user);
-      } else {
-        // Token is invalid, remove it
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Token verification error:', error);
-      // In case of error, clear authentication data
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      setUser(null);
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
-  // Load cart and check authentication on initial render
+  // Load cart from localStorage on initial render
   useEffect(() => {
-    // Load cart from localStorage
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
 
-    // Check for authentication token and load user data
-    const token = localStorage.getItem('token');
+    // Load user from localStorage
     const savedUser = localStorage.getItem('user');
-    
-    if (token && savedUser) {
-      // If we have both token and user data, set user state
+    if (savedUser) {
       setUser(JSON.parse(savedUser));
-      // But still verify the token with server to ensure it's valid
-      checkTokenValidity();
-    } else {
-      // No valid authentication data
-      setAuthLoading(false);
     }
   }, []);
 
@@ -257,38 +209,17 @@ function App() {
 
   // Login user
   const login = (userData) => {
-    // Store user data in state and localStorage
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    
-    // If there's a token in userData, store it in localStorage
-    if (userData.token) {
-      localStorage.setItem('token', userData.token);
-    }
   };
 
   // Register user
   const register = (userData) => {
-    // For registration, we typically just redirect to login
-    // The actual registration is handled by the Register component
-    // But we can also set user state if the API returns user data
-    if (userData) {
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
-      // If there's a token in userData, store it in localStorage
-      if (userData.token) {
-        localStorage.setItem('token', userData.token);
-      }
-    }
+    setUser(userData);
   };
 
   // Logout user
   const logout = () => {
-    // Clear user state and remove from localStorage
     setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
   };
 
   // Protected route component
@@ -302,7 +233,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
+      <Router basename="/Fashion-web">
         <div className="App">
           <Navbar 
             cartItemCount={cart.reduce((total, item) => total + item.quantity, 0)} 
@@ -335,7 +266,6 @@ function App() {
                 } 
               />
               <Route path="/about" element={<About />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           <Footer />
