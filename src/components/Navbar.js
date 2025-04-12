@@ -34,7 +34,6 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
     { text: 'Home', path: '/' },
     { text: "Men's Collection", path: '/category/men' },
     { text: "Women's Collection", path: '/category/women' },
-    { text: 'New Arrivals', path: '/new-arrivals' },
     { text: 'About', path: '/about' },
     { text: 'Contact', path: '/contact' },
   ];
@@ -262,7 +261,7 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
           }
         }}
       >
-        {drawer}
+        {drawer}  
       </Drawer>
       
       {profileMenu}

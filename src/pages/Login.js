@@ -62,20 +62,50 @@ const Login = ({ login }) => {
       return;
     }
     
-    // For demo purposes, let's use a simple check
-    // In a real app, you would call an API to authenticate
-    if (email === 'user@example.com' && password === 'password123') {
-      // Successful login
-      login({ email, name: 'Demo User' });
-      setOpenSnackbar(true);
-      
-      // Redirect after a short delay
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
-    } else {
-      setLoginError('Invalid email or password');
-    }
+    // Send login data to server
+    fetch('http://localhost:3001/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((response) => {
+        console.log('Login response status:', response.status);
+        if (!response.ok) {
+          return response.json().then(data => {
+            console.error('Login server error:', data);
+            throw new Error(data.message || 'Login failed');
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Login success:', data);
+        
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
+        // Call the login function passed from parent component
+        login(data.result || { email, name: data.result?.name || 'User' });
+        
+        // Show success message
+        setOpenSnackbar(true);
+        
+        // Redirect after a short delay
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      })
+      .catch((error) => {
+        console.error('Login error:', error);
+        setLoginError(error.message || 'Invalid email or password');
+      });
   };
 
   const handleCloseSnackbar = () => {

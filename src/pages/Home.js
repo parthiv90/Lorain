@@ -13,8 +13,6 @@ const Home = ({ addToCart }) => {
 
   return (
     <div>
-      {/* Removing the Spring Collection video section */}
-      
       <Hero />
       
       <Container>
@@ -22,10 +20,10 @@ const Home = ({ addToCart }) => {
         <Box sx={{ my: 8 }}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2, boxShadow: 'none', border: '1px solid #f0f0f0' }}>
                 <CardContent>
                   <LocalShipping color="primary" sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h6" gutterBottom>Free Shipping</Typography>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: '"Bodoni Moda", serif', letterSpacing: '0.5px' }}>Free Shipping</Typography>
                   <Typography variant="body2" color="text.secondary">
                     On orders over ₹3,500
                   </Typography>
@@ -33,10 +31,10 @@ const Home = ({ addToCart }) => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2, boxShadow: 'none', border: '1px solid #f0f0f0' }}>
                 <CardContent>
                   <Verified color="primary" sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h6" gutterBottom>Quality Guarantee</Typography>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: '"Bodoni Moda", serif', letterSpacing: '0.5px' }}>Quality Guarantee</Typography>
                   <Typography variant="body2" color="text.secondary">
                     100% original products
                   </Typography>
@@ -44,10 +42,10 @@ const Home = ({ addToCart }) => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2, boxShadow: 'none', border: '1px solid #f0f0f0' }}>
                 <CardContent>
                   <Support color="primary" sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h6" gutterBottom>24/7 Support</Typography>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: '"Bodoni Moda", serif', letterSpacing: '0.5px' }}>24/7 Support</Typography>
                   <Typography variant="body2" color="text.secondary">
                     Dedicated customer service
                   </Typography>
@@ -55,10 +53,10 @@ const Home = ({ addToCart }) => {
               </Card>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
+              <Card sx={{ height: '100%', textAlign: 'center', p: 2, boxShadow: 'none', border: '1px solid #f0f0f0' }}>
                 <CardContent>
                   <TrendingUp color="primary" sx={{ fontSize: 40, mb: 2 }} />
-                  <Typography variant="h6" gutterBottom>Latest Trends</Typography>
+                  <Typography variant="h6" gutterBottom sx={{ fontFamily: '"Bodoni Moda", serif', letterSpacing: '0.5px' }}>Latest Trends</Typography>
                   <Typography variant="body2" color="text.secondary">
                     Updated with fashion trends
                   </Typography>
@@ -68,103 +66,91 @@ const Home = ({ addToCart }) => {
           </Grid>
         </Box>
         
-        {/* Fashion Video Section */}
+        {/* Video Banner Section - Moved between shipping section and featured products */}
         <Box 
           sx={{ 
-            width: '100%', 
-            height: { xs: '400px', sm: '500px', md: '600px' },
             position: 'relative',
+            height: { xs: '400px', md: '600px' },
+            width: '100%',
             overflow: 'hidden',
             mb: 8,
-            mt: 8
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
           <Box
             component="video"
-            src="https://videos.pexels.com/video-files/4825045/4825045-uhd_2560_1440_30fps.mp4"
+            src="https://assets.mixkit.co/videos/18209/18209-720.mp4"
             autoPlay
             muted
             loop
-            playsInline
             sx={{
+              position: 'absolute',
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              filter: 'brightness(0.75)',
+              zIndex: -1,
+              filter: 'brightness(0.5)',
             }}
           />
           <Box
             sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              px: 2,
+              textAlign: 'center',
+              color: 'white',
+              p: 4,
+              maxWidth: '800px'
             }}
           >
-            <Typography
-              variant="h3"
-              component="h2"
-              color="white"
-              sx={{
-                textAlign: 'center',
-                fontFamily: '"Bodoni Moda", serif',
-                fontWeight: '600',
-                mb: 3,
-                textShadow: '1px 1px 3px rgba(0,0,0,0.3)',
-                fontSize: { xs: '1rem', sm: '2.8rem', md: '3.5rem' },
-                letterSpacing: 4,
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              gutterBottom
+              sx={{ 
+                fontWeight: '500',
                 textTransform: 'uppercase',
+                letterSpacing: 2,
+                fontSize: { xs: '2rem', md: '3rem' },
+                fontFamily: '"Bodoni Moda", serif',
               }}
             >
-              Style Redefined
+              STYLE REDEFINED
             </Typography>
-            <Typography
-              variant="body1"
-              color="white"
-              sx={{
-                textAlign: 'center',
-                fontFamily: '"Cormorant Garamond", serif',
-                mb: 5,
-                maxWidth: '700px',
-                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.3rem' },
-                letterSpacing: 1,
-                fontWeight: '400',
+            <Typography 
+              variant="h6" 
+              paragraph
+              sx={{ 
+                mb: 4,
+                maxWidth: '900px',
+                mx: 'auto',
+                letterSpacing: '0.5px',
+                fontWeight: 300
               }}
             >
               Experience elegance and sophistication with our carefully curated collection
             </Typography>
-            <Button
-              variant="contained"
+            <Button 
+              variant="contained" 
+              color="primary" 
               size="large"
               component={Link}
               to="/category/women"
-              sx={{
-                px: 6,
+              sx={{ 
+                // borderRadius: '10px',
+                px: 4,
                 py: 1.5,
+                fontWeight: 'bold',
+                textTransform: 'none',
+                fontSize: '1rem',
+                backgroundColor: 'white',
                 color: 'black',
-                bgcolor: 'white',
-                borderRadius: 0,
-                fontWeight: '600',
-                letterSpacing: 1,
-                fontSize: '0.9rem',
-                textTransform: 'uppercase',
-                boxShadow: 'none',
+                letterSpacing: '0.5px',
                 '&:hover': {
-                  bgcolor: 'rgba(255,255,255,0.9)',
-                  boxShadow: 'none',
+                  backgroundColor: 'rgba(179, 176, 176, 0.78)',
                 }
               }}
             >
-              Discover Collection
+              DISCOVER COLLECTION
             </Button>
           </Box>
         </Box>
@@ -176,24 +162,23 @@ const Home = ({ addToCart }) => {
             component="h2" 
             gutterBottom 
             sx={{ 
-              fontWeight: '600',
+              fontSize: '30px',
               textAlign: 'center',
               position: 'relative',
               mb: 5,
-              fontSize: '1.8rem',
-              letterSpacing: 2,
-              textTransform: 'uppercase',
+              fontFamily: '"Playfair Display", serif', 
+              letterSpacing: '2px',
               '&::after': {
                 content: '""',
                 display: 'block',
-                width: '40px',
-                height: '2px',
-                backgroundColor: 'black',
-                margin: '16px auto',
+                width: '50px',
+                height: '3px',
+                backgroundColor: 'primary.main',
+                margin: '8px auto',
               }
             }}
           >
-            Featured Products
+            FEATURED PRODUCTS
           </Typography>
           
           <Grid container spacing={3}>
@@ -203,43 +188,6 @@ const Home = ({ addToCart }) => {
               </Grid>
             ))}
           </Grid>
-          
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
-            <Button 
-              variant="outlined" 
-              color="primary" 
-              size="large" 
-              component={Link} 
-              to="/category/men"
-              sx={{ 
-                mx: 2,
-                px: 4,
-                py: 1,
-                borderRadius: '30px',
-                textTransform: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              Shop Men's Collection
-            </Button>
-            <Button 
-              variant="outlined" 
-              color="primary" 
-              size="large" 
-              component={Link} 
-              to="/category/women"
-              sx={{ 
-                mx: 2,
-                px: 4,
-                py: 1,
-                borderRadius: '30px',
-                textTransform: 'none',
-                fontWeight: 'bold'
-              }}
-            >
-              Shop Women's Collection
-            </Button>
-          </Box>
         </Box>
         
         <Divider sx={{ my: 8 }} />
@@ -249,19 +197,24 @@ const Home = ({ addToCart }) => {
             <Grid item xs={12} md={6}>
               <Box
                 sx={{
-                  height: '400px',
-                  backgroundImage: 'url(https://images.unsplash.com/photo-1737994874349-9da316080f17?q=80&w=2500&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+                  height: '500px',
+                  backgroundImage: 'url(https://images.unsplash.com/photo-1737994874349-9da316080f17?q=80&w=3000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: 2,
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
                 }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h4" component="h2" gutterBottom sx={{ 
+                // fontWeight: 'bold',
+                fontFamily: '"Playfair Display", serif',
+                letterSpacing: 1
+              }}>
                 Men's Collection
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" paragraph sx={{ letterSpacing: '0.5px', lineHeight: 1.8 }}>
                 Discover our latest men's collection featuring stylish and comfortable clothing for every occasion. From casual t-shirts to formal blazers, we have everything you need to elevate your style.
               </Typography>
               <Button 
@@ -276,7 +229,8 @@ const Home = ({ addToCart }) => {
                   py: 1,
                   borderRadius: '30px',
                   textTransform: 'none',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  letterSpacing: '0.5px'
                 }}
               >
                 Shop Men's Collection
@@ -288,15 +242,19 @@ const Home = ({ addToCart }) => {
         <Box sx={{ mb: 8 }}>
           <Grid container spacing={4} alignItems="center" direction={{ xs: 'column-reverse', md: 'row' }}>
             <Grid item xs={12} md={6}>
-              <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h4" component="h2" gutterBottom sx={{ 
+                // fontWeight: 'bold',
+                letterSpacing: '0.5px',
+                fontFamily: '"Playfair Display", serif'
+              }}>
                 Women's Collection
               </Typography>
-              <Typography variant="body1" paragraph>
+              <Typography variant="body1" paragraph sx={{ letterSpacing: '0.5px', lineHeight: 1.8 }}>
                 Explore our women's collection featuring trendy and elegant clothing for every style. From casual blouses to stylish dresses, we have the perfect pieces to enhance your wardrobe.
               </Typography>
               <Button 
                 variant="contained" 
-                color="primary"   h
+                color="primary" 
                 size="large" 
                 component={Link} 
                 to="/category/women"
@@ -306,7 +264,8 @@ const Home = ({ addToCart }) => {
                   py: 1,
                   borderRadius: '30px',
                   textTransform: 'none',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  letterSpacing: '0.5px'
                 }}
               >
                 Shop Women's Collection
@@ -315,14 +274,17 @@ const Home = ({ addToCart }) => {
             <Grid item xs={12} md={6}>
               <Box
                 sx={{
-                  height: { xs: '300px', md: '400px' },
-                  width: '100%',
-                  backgroundImage: 'url(https://images.pexels.com/photos/10131764/pexels-photo-10131764.jpeg?auto=compress&cs=tinysrgb&w=2500)',
+                  height: '500px',
+                  backgroundImage: 'url(https://images.pexels.com/photos/10131764/pexels-photo-10131764.jpeg?auto=compress&cs=tinysrgb&w=3000)',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   borderRadius: 2,
-                  mb: { xs: 3, md: 0 },
-                  display: 'block',
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                  '@media (max-width: 600px)': {
+                    height: '300px',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }
                 }}
               />
             </Grid>
@@ -333,4 +295,4 @@ const Home = ({ addToCart }) => {
   );
 };
 
-export default Home; 
+export default Home;

@@ -41,13 +41,33 @@ const About = () => {
             Our Story
           </Typography>
           <Typography variant="body1" paragraph>
-            Founded in 2020, Lorain was born from a simple idea: to create stylish, high-quality clothing that doesn't break the bank. Our journey began in a small studio with a team of passionate designers who shared a vision for accessible fashion.
+            Founded in 2018 in Paris, Lorain was born from a simple idea: to create stylish, high-quality clothing that doesn't break the bank. Our journey began in a small studio with a team of passionate designers who shared a vision for accessible fashion.
           </Typography>
           <Typography variant="body1" paragraph>
             Over the years, we've grown from a small local brand to an international name in fashion, but our core values remain the same. We believe in ethical production, sustainable practices, and creating clothes that help people express their unique style.
           </Typography>
         </Grid>
       </Grid>
+        
+      {/* <Box  >
+  <video
+    src="https://assets.mixkit.co/videos/18209/18209-720.mp4?w=1280&h=720&format=mp4"
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{
+      width: '25%',
+      height: '50%',
+      objectFit: 'cover',
+      position: 'absolute',
+      alignContent:'left',
+      top: 0,
+      left: '20px',
+      filter: 'brightness(0.8)',
+    }}
+  /> */}
+{/* </Box> */}
 
       {/* Values Section */}
       <Box sx={{ mb: 8 }}>
@@ -98,7 +118,7 @@ const About = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Box
                 component="img"
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                src="./About/CEO.jpg"
                 alt="CEO Portrait"
                 sx={{
                   width: '200px',
@@ -109,13 +129,13 @@ const About = () => {
                 }}
               />
               <Typography variant="h5" component="h3" fontWeight="bold">
-                Alex Mitchell
+                Parthiv Thummar
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
                 Founder & CEO
               </Typography>
               <Typography variant="body2">
-                With over 15 years of experience in the fashion industry, Alex leads our team with vision and passion.
+                With over 15 years of experience in the fashion industry, Parthiv leads our team with vision and passion.
               </Typography>
             </Box>
           </Grid>
@@ -123,8 +143,8 @@ const About = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Box
                 component="img"
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-                alt="Designer Portrait"
+                src="./About/ParthAbout.jpg"
+                alt="Lead Designer Portrait"
                 sx={{
                   width: '200px',
                   height: '200px',
@@ -134,13 +154,13 @@ const About = () => {
                 }}
               />
               <Typography variant="h5" component="h3" fontWeight="bold">
-                Sarah Zhang
+                Parth Thummar
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
                 Lead Designer
               </Typography>
               <Typography variant="body2">
-                Sarah brings creative flair and innovative design thinking to each collection, pushing boundaries while maintaining wearability.
+                Parth brings creative flair and innovative design thinking to each collection, pushing boundaries while maintaining wearability.
               </Typography>
             </Box>
           </Grid>
@@ -148,7 +168,7 @@ const About = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Box
                 component="img"
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+                src="./About/Param.jpg"
                 alt="Operations Portrait"
                 sx={{
                   width: '200px',
@@ -159,13 +179,13 @@ const About = () => {
                 }}
               />
               <Typography variant="h5" component="h3" fontWeight="bold">
-                David Kumar
+                Param Thummar
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
                 Head of Operations
               </Typography>
               <Typography variant="body2">
-                David ensures our production processes run smoothly and ethically, maintaining quality while minimizing environmental impact.
+                Param ensures our production processes run smoothly and ethically, maintaining quality while minimizing environmental impact.
               </Typography>
             </Box>
           </Grid>
@@ -184,5 +204,6 @@ const About = () => {
     </Container>
   );
 };
+
 
 export default About; 

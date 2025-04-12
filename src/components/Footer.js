@@ -124,19 +124,6 @@ const Footer = () => {
             }}>
               Women's Clothing
             </Link>
-            <Link href="/Fashion-web/new-arrivals" color="inherit" underline="hover" display="block" sx={{ 
-              mb: 2,
-              fontSize: '0.9rem',
-              letterSpacing: 0.5,
-              opacity: 0.85,
-              transition: 'all 0.2s',
-              '&:hover': {
-                opacity: 1,
-                pl: 0.5
-              }
-            }}>
-              New Arrivals
-            </Link>
             <Link href="/Fashion-web/sale" color="inherit" underline="hover" display="block" sx={{ 
               mb: 2,
               fontSize: '0.9rem',
@@ -263,7 +250,7 @@ const Footer = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Phone fontSize="small" sx={{ mr: 1, opacity: 0.85 }} />
               <Typography variant="body2" sx={{ fontSize: '0.9rem', letterSpacing: 0.5 }}>
-                +91 98765 43210
+                +91 95108 74033
               </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardMedia, CardContent, Typography, CardActions, Button, Rating, Box, Chip } from '@mui/material';
-import { ShoppingCart } from '@mui/icons-material';
+import { Card, CardMedia, CardContent, Typography,Rating, Box, Chip } from '@mui/material';
+// import { ShoppingCart } from '@mui/icons-material';
 import {useNavigate} from 'react-router-dom';
 
 // Fallback images for when product images are not available
@@ -171,7 +171,7 @@ const ProductCard = ({ product, addToCart }) => {
         </Typography>
       </CardContent>
       
-      <CardActions sx={{ justifyContent: 'flex-end', p: 2, pt: 0 }}>
+      {/* <CardActions sx={{ justifyContent: 'flex-end', p: 2, pt: 0 }}>
         <Button 
           variant="contained" 
           size="small" 
@@ -202,7 +202,7 @@ const ProductCard = ({ product, addToCart }) => {
         >
           Add to Cart
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 };

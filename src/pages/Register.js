@@ -94,19 +94,57 @@ const Register = ({ register }) => {
     e.preventDefault();
     
     if (validateForm()) {
-      // For demo purposes, we'll just simulate a successful registration
-      // In a real app, you would call an API to register the user
-      register({
+      console.log('Submitting form data:', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
-        name: `${formData.firstName} ${formData.lastName}`
+        acceptTerms: formData.acceptTerms
       });
       
-      setOpenSnackbar(true);
-      
-      // Redirect after a short delay
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      // Send registration data to server
+      fetch('http://localhost:3001/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          acceptTerms: formData.acceptTerms
+        }),
+      })
+        .then((response) => {
+          console.log('Registration response status:', response.status);
+          if (!response.ok) {
+            return response.json().then(data => {
+              console.error('Registration server error:', data);
+              throw new Error(data.message || 'Registration failed');
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log('Registration success:', data);
+          // Registration successful
+          setOpenSnackbar(true);
+          
+          // Redirect after a short delay
+          setTimeout(() => {
+            navigate('/');
+          }, 1500);
+        })
+        .catch((error) => {
+          console.error('Registration error:', error);
+          setErrors(prev => ({ 
+            ...prev, 
+            general: error.message 
+          }));
+          
+          // Show error in UI
+          alert(`Registration failed: ${error.message}`);
+        });
     }
   };
 

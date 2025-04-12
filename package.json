@@ -1,8 +1,8 @@
 {
-  "homepage": "https://parthiv90.github.io/Fashion-web",
   "name": "lorain",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
