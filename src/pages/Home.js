@@ -1,15 +1,51 @@
-import React from 'react';
-import { Container, Typography, Box, Grid, Button, Divider, Card, CardContent } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Typography, Box, Grid, Button, Divider, Card, CardContent, CardMedia } from '@mui/material';
 import { TrendingUp, LocalShipping, Verified, Support } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import products from '../data/products';
+// Remove unused components
+// import ProductList from '../components/ProductList';
+// import LuxuryFeature from '../components/LuxuryFeature';
+// import { PRODUCTS } from '../data/products';
+// import bannerImage from '../assets/images/hero-banner.jpg';
+// import deliveryIcon from '../assets/icons/delivery.svg';
+// import qualityIcon from '../assets/icons/quality.svg';
+// import customerServiceIcon from '../assets/icons/customer-service.svg';
 
-const Home = ({ addToCart }) => {
-  // Get featured products (select specific products for better curation)
-  const featuredProductIds = [1, 3, 5, 7, 9, 11];
-  const featuredProducts = products.filter(product => featuredProductIds.includes(product.id));
+// Define FEATURED_PRODUCT_IDS for combined 7 products (4 men's and 3 women's)
+const FEATURED_PRODUCT_IDS = [1, 2, 3, 5, 7, 9, 12];
+// Define MENS_PRODUCT_IDS - selecting 4 men's products
+const MENS_PRODUCT_IDS = [1, 2, 3, 13];
+// Define WOMENS_PRODUCT_IDS - selecting 4 women's products
+const WOMENS_PRODUCT_IDS = [7, 8, 9, 19];
+
+const Home = ({ addToCart, addToWishlist }) => {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [mensProducts, setMensProducts] = useState([]);
+  const [womensProducts, setWomensProducts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Filter products to show combined featured products
+    const featured = products.filter(product => 
+      FEATURED_PRODUCT_IDS.includes(product.id)
+    );
+    setFeaturedProducts(featured);
+
+    // Filter products to show selected men's products
+    const mens = products.filter(product => 
+      MENS_PRODUCT_IDS.includes(product.id)
+    );
+    setMensProducts(mens);
+
+    // Filter products to show selected women's products
+    const womens = products.filter(product => 
+      WOMENS_PRODUCT_IDS.includes(product.id)
+    );
+    setWomensProducts(womens);
+  }, []);
 
   return (
     <div>
@@ -181,10 +217,15 @@ const Home = ({ addToCart }) => {
             FEATURED PRODUCTS
           </Typography>
           
-          <Grid container spacing={3}>
+          <Grid container spacing={4} mb={6}>
             {featuredProducts.map((product) => (
-              <Grid item key={product.id} xs={12} sm={6} md={4} lg={4}>
-                <ProductCard product={product} addToCart={addToCart} />
+              <Grid item xs={12} sm={6} md={3} key={product.id}>
+                <ProductCard 
+                  product={product} 
+                  addToCart={addToCart} 
+                  addToWishlist={addToWishlist}
+                  showCartButton={false}
+                />
               </Grid>
             ))}
           </Grid>

@@ -8,15 +8,15 @@ import {
   Grid, 
   Link, 
   Paper, 
-  Divider,
   InputAdornment,
   IconButton,
   Alert,
   Snackbar,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  CircularProgress
 } from '@mui/material';
-import { Visibility, VisibilityOff, Google, Facebook } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 const Register = ({ register }) => {
@@ -32,7 +32,10 @@ const Register = ({ register }) => {
     acceptTerms: false
   });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
@@ -90,23 +93,57 @@ const Register = ({ register }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
-      // For demo purposes, we'll just simulate a successful registration
-      // In a real app, you would call an API to register the user
-      register({
-        email: formData.email,
-        name: `${formData.firstName} ${formData.lastName}`
-      });
-      
-      setOpenSnackbar(true);
-      
-      // Redirect after a short delay
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      setLoading(true);
+
+      try {
+        // Send registration data to server to generate and send OTP
+        const response = await fetch('http://localhost:3001/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: formData.password,
+            acceptTerms: formData.acceptTerms
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Registration failed');
+        }
+
+        // Show success message
+        setSnackbarMessage('OTP sent to your email!');
+        setSnackbarSeverity('success');
+        setOpenSnackbar(true);
+        
+        // Redirect to OTP verification page with email and tempData
+        setTimeout(() => {
+          navigate('/verify-otp', { 
+            state: { 
+              email: formData.email,
+              tempData: data.tempData,
+              testOtp: data.testOtp
+            } 
+          });
+        }, 1500);
+      } catch (error) {
+        console.error('Registration error:', error);
+        setSnackbarMessage(error.message);
+        setSnackbarSeverity('error');
+        setOpenSnackbar(true);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -250,9 +287,10 @@ const Register = ({ register }) => {
             type="submit"
             fullWidth
             variant="contained"
+            disabled={loading}
             sx={{ mt: 3, mb: 2, py: 1.5, textTransform: 'none', fontWeight: 'bold' }}
           >
-            Register
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
           </Button>
           
           <Box sx={{ textAlign: 'center', mt: 2 }}>
@@ -264,40 +302,11 @@ const Register = ({ register }) => {
             </Typography>
           </Box>
         </Box>
-        
-        <Divider sx={{ my: 3 }}>
-          <Typography variant="body2" color="text.secondary">
-            OR
-          </Typography>
-        </Divider>
-        
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<Google />}
-              sx={{ py: 1, textTransform: 'none' }}
-            >
-              Register with Google
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<Facebook />}
-              sx={{ py: 1, textTransform: 'none' }}
-            >
-              Register with Facebook
-            </Button>
-          </Grid>
-        </Grid>
       </Paper>
       
       <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Registration successful! Redirecting...
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </Container>

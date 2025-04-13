@@ -5,16 +5,14 @@ import {
   Typography, 
   TextField, 
   Button, 
-  Grid, 
   Link, 
   Paper, 
-  Divider,
   InputAdornment,
   IconButton,
   Alert,
   Snackbar
 } from '@mui/material';
-import { Visibility, VisibilityOff, Google, Facebook } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 const Login = ({ login }) => {
@@ -74,27 +72,16 @@ const Login = ({ login }) => {
       }),
     })
       .then((response) => {
-        console.log('Login response status:', response.status);
         if (!response.ok) {
           return response.json().then(data => {
-            console.error('Login server error:', data);
             throw new Error(data.message || 'Login failed');
           });
         }
         return response.json();
       })
       .then((data) => {
-        console.log('Login success:', data);
-        
-        // Store token in localStorage
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-        
-        // Call the login function passed from parent component
-        login(data.result || { email, name: data.result?.name || 'User' });
-        
-        // Show success message
+        // Successful login
+        login(data.result);
         setOpenSnackbar(true);
         
         // Redirect after a short delay
@@ -104,7 +91,7 @@ const Login = ({ login }) => {
       })
       .catch((error) => {
         console.error('Login error:', error);
-        setLoginError(error.message || 'Invalid email or password');
+        setLoginError(error.message);
       });
   };
 
@@ -198,35 +185,6 @@ const Login = ({ login }) => {
             </Typography>
           </Box>
         </Box>
-        
-        <Divider sx={{ my: 3 }}>
-          <Typography variant="body2" color="text.secondary">
-            OR
-          </Typography>
-        </Divider>
-        
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<Google />}
-              sx={{ py: 1, textTransform: 'none' }}
-            >
-              Login with Google
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<Facebook />}
-              sx={{ py: 1, textTransform: 'none' }}
-            >
-              Login with Facebook
-            </Button>
-          </Grid>
-        </Grid>
       </Paper>
       
       <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>

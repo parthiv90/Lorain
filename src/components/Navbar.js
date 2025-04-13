@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Badge, Drawer, List, ListItem, ListItemText, Container, useMediaQuery, useTheme, Menu, MenuItem, Avatar, Box } from '@mui/material';
-import { ShoppingCart, Menu as MenuIcon, Search } from '@mui/icons-material';
+import { ShoppingCart, Menu as MenuIcon, FavoriteBorder } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-const Navbar = ({ cartItemCount = 0, user, logout }) => {
+const Navbar = ({ cartItemCount = 0, wishlistItemCount = 0, user, logout }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
@@ -117,10 +117,6 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
                 <MenuIcon />
               </IconButton>
             )}
-            
-            <IconButton color="inherit" sx={{ ml: 1 }}>
-              <Search />
-            </IconButton>
           </Box>
           
           {/* Centered Logo */}
@@ -154,22 +150,35 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
             alignItems: 'center'
           }}>
             {user ? (
-              <IconButton 
-                color="inherit" 
-                onClick={handleProfileMenuOpen}
-                sx={{ ml: 1 }}
-              >
-                <Avatar 
-                  sx={{ 
-                    width: 32, 
-                    height: 32, 
-                    bgcolor: 'grey.800',
-                    fontSize: '0.875rem'
-                  }}
+              <>
+                <IconButton 
+                  color="inherit" 
+                  component={Link}
+                  to="/wishlist"
+                  sx={{ ml: 1 }}
                 >
-                  {user.name.charAt(0)}
-                </Avatar>
-              </IconButton>
+                  <Badge badgeContent={wishlistItemCount} color="secondary">
+                    <FavoriteBorder sx={{ fontSize: '1.2rem' }} />
+                  </Badge>
+                </IconButton>
+                
+                <IconButton 
+                  color="inherit" 
+                  onClick={handleProfileMenuOpen}
+                  sx={{ ml: 1 }}
+                >
+                  <Avatar 
+                    sx={{ 
+                      width: 32, 
+                      height: 32, 
+                      bgcolor: 'grey.800',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    {user && user.name ? user.name.charAt(0) : '?'}
+                  </Avatar>
+                </IconButton>
+              </>
             ) : (
               <Button 
                 color="inherit" 
@@ -191,7 +200,7 @@ const Navbar = ({ cartItemCount = 0, user, logout }) => {
             )}
             
             <IconButton color="inherit" component={Link} to="/cart" sx={{ ml: 1 }}>
-              <Badge badgeContent={cartItemCount} color="primary">
+              <Badge badgeContent={cartItemCount} color="primary" max={99}>
                 <ShoppingCart sx={{ fontSize: '1.2rem' }} />
               </Badge>
             </IconButton>

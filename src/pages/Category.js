@@ -4,7 +4,7 @@ import { Container, Typography, Box, Breadcrumbs, Link } from '@mui/material';
 import ProductList from '../components/ProductList';
 import products from '../data/products';
 
-const Category = ({ addToCart }) => {
+const Category = ({ addToCart, addToWishlist }) => {
   const { categoryId } = useParams();
   const [page, setPage] = useState(1);
   const productsPerPage = 8;
@@ -71,6 +71,7 @@ const Category = ({ addToCart }) => {
         products={currentProducts} 
         title="" 
         addToCart={addToCart}
+        addToWishlist={addToWishlist}
         page={page}
         setPage={setPage}
         productsPerPage={productsPerPage}

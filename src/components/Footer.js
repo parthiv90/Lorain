@@ -176,19 +176,6 @@ const Footer = () => {
             }}>
               Contact Us
             </Link>
-            <Link href="/Fashion-web/faq" color="inherit" underline="hover" display="block" sx={{ 
-              mb: 2,
-              fontSize: '0.9rem',
-              letterSpacing: 0.5,
-              opacity: 0.85,
-              transition: 'all 0.2s',
-              '&:hover': {
-                opacity: 1,
-                pl: 0.5
-              }
-            }}>
-              FAQ
-            </Link>
             <Link href="/Fashion-web/shipping" color="inherit" underline="hover" display="block" sx={{ 
               mb: 2,
               fontSize: '0.9rem',

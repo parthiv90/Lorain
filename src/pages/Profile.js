@@ -18,7 +18,10 @@ import {
   Card,
   CardContent,
   Snackbar,
-  Alert
+  Alert,
+  CardMedia,
+  CardActions,
+  IconButton
 } from '@mui/material';
 import { 
   Person, 
@@ -28,11 +31,13 @@ import {
   CreditCard, 
   ExitToApp,
   Edit,
-  Save
+  Save,
+  Delete,
+  AddShoppingCart
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
-const Profile = ({ user, logout }) => {
+const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishlist }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
   const [editMode, setEditMode] = useState(false);
@@ -81,6 +86,11 @@ const Profile = ({ user, logout }) => {
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+  };
+
+  // Handle product click to navigate to product details
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   const renderProfileTab = () => (
@@ -205,21 +215,46 @@ const Profile = ({ user, logout }) => {
       </Typography>
       <Divider sx={{ mb: 3 }} />
       
-      <Box sx={{ textAlign: 'center', py: 5 }}>
-        <ShoppingBag sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-        <Typography variant="h6" gutterBottom>
-          No orders yet
-        </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
-          When you place an order, it will appear here.
-        </Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => navigate('/')}
-        >
-          Start Shopping
-        </Button>
-      </Box>
+      {user.orderHistory && user.orderHistory.length > 0 ? (
+        <Grid container spacing={3}>
+          {user.orderHistory.map((order) => (
+            <Grid item xs={12} key={order.orderId}>
+              <Card>
+                <CardContent>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Order #{order.orderId}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Date: {new Date(order.orderDate).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Status: {order.status}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Total: ${order.totalAmount.toFixed(2)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Box sx={{ textAlign: 'center', py: 5 }}>
+          <ShoppingBag sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+          <Typography variant="h6" gutterBottom>
+            No orders yet
+          </Typography>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            When you place an order, it will appear here.
+          </Typography>
+          <Button 
+            variant="contained" 
+            onClick={() => navigate('/')}
+          >
+            Start Shopping
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 
@@ -230,21 +265,78 @@ const Profile = ({ user, logout }) => {
       </Typography>
       <Divider sx={{ mb: 3 }} />
       
-      <Box sx={{ textAlign: 'center', py: 5 }}>
-        <Favorite sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-        <Typography variant="h6" gutterBottom>
-          Your wishlist is empty
-        </Typography>
-        <Typography variant="body2" color="text.secondary" paragraph>
-          Save items you like to your wishlist and they will appear here.
-        </Typography>
-        <Button 
-          variant="contained" 
-          onClick={() => navigate('/')}
-        >
-          Explore Products
-        </Button>
-      </Box>
+      {wishlist && wishlist.length > 0 ? (
+        <Grid container spacing={3}>
+          {wishlist.map((item, index) => (
+            <Grid item xs={12} sm={6} md={4} key={`${item.id}-${item.selectedSize}-${item.selectedColor}-${index}`}>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <CardMedia
+                  component="img"
+                  height={200}
+                  image={item.image}
+                  alt={item.name}
+                  sx={{ cursor: 'pointer', objectFit: 'cover' }}
+                  onClick={() => handleProductClick(item.id)}
+                />
+                <CardContent sx={{ flexGrow: 1 }}>
+                  <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', mb: 1 }}>
+                    {item.name}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    ${item.price.toFixed(2)}
+                  </Typography>
+                  {item.selectedSize && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      Size: {item.selectedSize}
+                    </Typography>
+                  )}
+                  {item.selectedColor && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                        Color:
+                      </Typography>
+                      <Box
+                        sx={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: '50%',
+                          backgroundColor: item.selectedColor,
+                          border: '1px solid #e0e0e0',
+                        }}
+                      />
+                    </Box>
+                  )}
+                </CardContent>
+                <CardActions sx={{ justifyContent: 'flex-end' }}>
+                  <IconButton 
+                    color="error" 
+                    onClick={() => removeFromWishlist(item)}
+                    aria-label="remove from wishlist"
+                  >
+                    <Delete />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Box sx={{ textAlign: 'center', py: 5 }}>
+          <Favorite sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+          <Typography variant="h6" gutterBottom>
+            Your wishlist is empty
+          </Typography>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            Save items you like to your wishlist and they will appear here.
+          </Typography>
+          <Button 
+            variant="contained" 
+            onClick={() => navigate('/')}
+          >
+            Explore Products
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 

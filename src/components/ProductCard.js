@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardMedia, CardContent, Typography,Rating, Box, Chip } from '@mui/material';
-// import { ShoppingCart } from '@mui/icons-material';
-import {useNavigate} from 'react-router-dom';
+import { Card, CardMedia, CardContent, Typography, Rating, Box, Chip, CardActions, Button, IconButton } from '@mui/material';
+import { ShoppingCart, FavoriteBorder } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 // Fallback images for when product images are not available
 const fallbackImages = {
@@ -9,7 +9,7 @@ const fallbackImages = {
   women: "https://images.unsplash.com/photo-1551163943-3f7e29e5ed20?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
 };
 
-const ProductCard = ({ product, addToCart }) => {
+const ProductCard = ({ product, addToCart, addToWishlist, showCartButton = true }) => {
   const { id, name, price, image, rating, inStock, category } = product;
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
@@ -29,11 +29,29 @@ const ProductCard = ({ product, addToCart }) => {
 
   // Handle card click to navigate to product detail
   const handleCardClick = (e) => {
-    // Prevent navigation if the click was on the Add to Cart button
-    if (e.target.closest('button') && e.target.closest('button').textContent.includes('Add to Cart')) {
+    // Prevent navigation if the click was on the buttons
+    if (e.target.closest('button')) {
       return;
     }
     navigate(`/product/${id}`);
+  };
+
+  // Handle wishlist button click
+  const handleAddToWishlist = (e) => {
+    e.stopPropagation();
+    // Call the addToWishlist function passed as prop
+    if (addToWishlist && inStock) {
+      addToWishlist(product);
+    }
+  };
+
+  // Handle add to cart button click
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    // Add the product to cart directly
+    if (addToCart && inStock) {
+      addToCart(product, { size: product.sizes?.[0] || 'M', color: product.colors?.[0] || 'Default' });
+    }
   };
 
   return (
@@ -112,7 +130,6 @@ const ProductCard = ({ product, addToCart }) => {
           variant="h6" 
           component="div" 
           sx={{ 
-            fontFamily: '"Cormorant Garamond", serif',
             fontWeight: '500',
             height: '3em',
             overflow: 'hidden',
@@ -134,75 +151,70 @@ const ProductCard = ({ product, addToCart }) => {
             precision={0.5} 
             size="small" 
             readOnly 
-            sx={{ 
-              color: 'primary.main',
-              '& .MuiRating-iconFilled': {
-                color: '#d4af37',
-              },
-              '& .MuiRating-iconEmpty': {
-                color: 'rgba(212, 175, 55, 0.3)',
-              }
-            }}
           />
           <Typography 
             variant="body2" 
             color="text.secondary" 
-            sx={{ 
-              ml: 1, 
-              fontFamily: '"Poppins", sans-serif',
-              fontSize: '0.75rem'
-            }}
+            sx={{ ml: 1, fontSize: '0.75rem' }}
           >
             ({rating})
           </Typography>
         </Box>
         
         <Typography 
-          variant="h6" 
-          color="primary" 
+          variant="h6"
           sx={{ 
-            fontFamily: '"Cormorant Garamond", serif',
             fontWeight: '600',
             letterSpacing: 0.5,
             fontSize: '1.2rem'
           }}
         >
-          ₹{price.toLocaleString('en-IN')}
+          ${price.toFixed(2)}
         </Typography>
       </CardContent>
       
-      {/* <CardActions sx={{ justifyContent: 'flex-end', p: 2, pt: 0 }}>
-        <Button 
-          variant="contained" 
-          size="small" 
-          startIcon={<ShoppingCart />}
-          onClick={(e) => {
-            e.stopPropagation();
-            addToCart(product);
-          }}
+      <CardActions sx={{ justifyContent: 'space-between', p: 2, pt: 0 }}>
+        {showCartButton && (
+          <Button 
+            variant="contained" 
+            size="small" 
+            startIcon={<ShoppingCart />}
+            onClick={handleAddToCart}
+            disabled={!inStock}
+            sx={{ 
+              textTransform: 'none',
+              borderRadius: 0,
+              px: 2,
+              letterSpacing: 0.5,
+              fontWeight: 400,
+              boxShadow: 'none',
+              backgroundColor: 'black',
+              '&:hover': {
+                backgroundColor: '#333',
+                boxShadow: 'none'
+              },
+              '&.Mui-disabled': {
+                backgroundColor: '#e0e0e0',
+                color: '#9e9e9e'
+              }
+            }}
+          >
+            Add to Cart
+          </Button>
+        )}
+        
+        <IconButton
+          size="small"
+          onClick={handleAddToWishlist}
           disabled={!inStock}
-          sx={{ 
-            textTransform: 'none',
-            fontFamily: '"Poppins", sans-serif',
-            borderRadius: 0,
-            px: 2,
-            letterSpacing: 0.5,
-            fontWeight: 400,
-            boxShadow: 'none',
-            backgroundColor: 'black',
-            '&:hover': {
-              backgroundColor: '#333',
-              boxShadow: 'none'
-            },
-            '&.Mui-disabled': {
-              backgroundColor: '#e0e0e0',
-              color: '#9e9e9e'
-            }
+          sx={{
+            color: 'secondary.main',
+            ml: showCartButton ? 0 : 'auto'
           }}
         >
-          Add to Cart
-        </Button>
-      </CardActions> */}
+          <FavoriteBorder />
+        </IconButton>
+      </CardActions>
     </Card>
   );
 };

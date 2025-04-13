@@ -6,6 +6,7 @@ const ProductList = ({
   products, 
   title = 'Products', 
   addToCart,
+  addToWishlist,
   page = 1,
   setPage,
   productsPerPage = 8,
@@ -18,6 +19,16 @@ const ProductList = ({
   };
 
   const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+  if (!products || products.length === 0) {
+    return (
+      <Box sx={{ textAlign: 'center', py: 5 }}>
+        <Typography variant="h6" color="text.secondary">
+          No products found.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Container>
@@ -46,34 +57,30 @@ const ProductList = ({
         )}
       </Box>
 
-      {products.length === 0 ? (
-        <Typography variant="h6" align="center" sx={{ my: 5 }}>
-          No products found.
-        </Typography>
-      ) : (
-        <>
-          <Grid container spacing={3}>
-            {products.map((product) => (
-              <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-                <ProductCard product={product} addToCart={addToCart} />
-              </Grid>
-            ))}
+      <Grid container spacing={3}>
+        {products.map((product) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+            <ProductCard 
+              product={product} 
+              addToCart={addToCart} 
+              addToWishlist={addToWishlist}
+            />
           </Grid>
+        ))}
+      </Grid>
 
-          {totalPages > 1 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <Pagination 
-                count={totalPages} 
-                page={page} 
-                onChange={handlePageChange} 
-                color="primary" 
-                size="large"
-                showFirstButton 
-                showLastButton
-              />
-            </Box>
-          )}
-        </>
+      {totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Pagination 
+            count={totalPages} 
+            page={page} 
+            onChange={handlePageChange} 
+            color="primary" 
+            size="large"
+            showFirstButton 
+            showLastButton
+          />
+        </Box>
       )}
     </Container>
   );

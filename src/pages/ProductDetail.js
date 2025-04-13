@@ -18,10 +18,12 @@ import {
   Snackbar,
   ImageList,
   ImageListItem,
+  IconButton,
 } from "@mui/material";
 import {
   ShoppingCart,
   Favorite,
+  FavoriteBorder,
   LocalShipping,
   Cached,
 } from "@mui/icons-material";
@@ -43,7 +45,7 @@ const additionalImages = {
   // ],
 };
 
-const ProductDetail = ({ addToCart }) => {
+const ProductDetail = ({ addToCart, addToWishlist }) => {
   const { productId } = useParams();
   const product = products.find((p) => p.id === parseInt(productId));
 
@@ -51,6 +53,8 @@ const ProductDetail = ({ addToCart }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity] = useState(1);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [selectedImage, setSelectedImage] = useState("");
   const [setImageError] = useState(false);
 
@@ -104,6 +108,30 @@ const ProductDetail = ({ addToCart }) => {
         selectedColor,
         quantity,
       });
+      setSnackbarMessage("Item added to cart");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    } else {
+      setSnackbarMessage("Please select size and color");
+      setSnackbarSeverity("warning");
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleAddToWishlist = () => {
+    if (selectedSize && selectedColor) {
+      addToWishlist({
+        ...product,
+        selectedSize,
+        selectedColor,
+        quantity: 1, // Default to 1 for wishlist
+      });
+      setSnackbarMessage("Item added to wishlist");
+      setSnackbarSeverity("success");
+      setOpenSnackbar(true);
+    } else {
+      setSnackbarMessage("Please select size and color");
+      setSnackbarSeverity("warning");
       setOpenSnackbar(true);
     }
   };
@@ -198,24 +226,20 @@ const ProductDetail = ({ addToCart }) => {
             variant="h4"
             component="h1"
             gutterBottom
-            sx={{ fontWeight: "bold" }}
+            sx={{ fontWeight: "medium" }}
           >
             {name}
           </Typography>
 
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <Rating value={rating} precision={0.5} readOnly />
-            <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-              ({rating} rating)
+            <Typography variant="body2" sx={{ ml: 1 }}>
+              {rating} / 5
             </Typography>
           </Box>
 
-          <Typography
-            variant="h5"
-            color="primary"
-            sx={{ fontWeight: "bold", mb: 3 }}
-          >
-            ₹{price.toLocaleString("en-IN")}
+          <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
+            ${price.toFixed(2)}
           </Typography>
 
           <Typography variant="body1" paragraph sx={{ mb: 3 }}>
@@ -223,76 +247,84 @@ const ProductDetail = ({ addToCart }) => {
           </Typography>
 
           <Box sx={{ mb: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="outlined" size="small">
-                  <InputLabel id="size-select-label">Size</InputLabel>
-                  <Select
-                    labelId="size-select-label"
-                    id="size-select"
-                    value={selectedSize}
-                    onChange={(e) => setSelectedSize(e.target.value)}
-                    label="Size"
-                    required
-                  >
-                    {sizes.map((size) => (
-                      <MenuItem key={size} value={size}>
-                        {size}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+            <Typography
+              variant="subtitle1"
+              sx={{ mb: 1, fontWeight: "medium" }}
+            >
+              Size
+            </Typography>
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel id="size-label">Select Size</InputLabel>
+              <Select
+                labelId="size-label"
+                id="size"
+                value={selectedSize}
+                label="Select Size"
+                onChange={(e) => setSelectedSize(e.target.value)}
+              >
+                {sizes.map((size) => (
+                  <MenuItem key={size} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth variant="outlined" size="small">
-                  <InputLabel id="color-select-label">Color</InputLabel>
-                  <Select
-                    labelId="color-select-label"
-                    id="color-select"
-                    value={selectedColor}
-                    onChange={(e) => setSelectedColor(e.target.value)}
-                    label="Color"
-                    required
-                  >
-                    {colors.map((color) => (
-                      <MenuItem key={color} value={color}>
-                        {color}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
+            <Typography
+              variant="subtitle1"
+              sx={{ mb: 1, fontWeight: "medium" }}
+            >
+              Color
+            </Typography>
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <InputLabel id="color-label">Select Color</InputLabel>
+              <Select
+                labelId="color-label"
+                id="color"
+                value={selectedColor}
+                label="Select Color"
+                onChange={(e) => setSelectedColor(e.target.value)}
+              >
+                {colors.map((color) => (
+                  <MenuItem key={color} value={color}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: "50%",
+                          backgroundColor: color,
+                          border: "1px solid #e0e0e0",
+                          mr: 1,
+                        }}
+                      />
+                      {color.charAt(0).toUpperCase() + color.slice(1)}
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
 
-          <Box sx={{ display: "flex", gap: 2, mb: 4 }}>
+          <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
             <Button
               variant="contained"
-              color="primary"
               size="large"
               startIcon={<ShoppingCart />}
               onClick={handleAddToCart}
-              disabled={!inStock || !selectedSize || !selectedColor}
-              sx={{
-                flex: 2,
-                py: 1.5,
-                textTransform: "none",
-                fontWeight: "bold",
-              }}
+              disabled={!inStock}
+              fullWidth
+              sx={{ py: 1.5 }}
             >
-              Add to Cart
+              {inStock ? "Add to Cart" : "Out of Stock"}
             </Button>
-
             <Button
               variant="outlined"
               size="large"
-              startIcon={<Favorite />}
-              sx={{
-                flex: 1,
-                py: 1.5,
-                textTransform: "none",
-              }}
+              startIcon={<FavoriteBorder />}
+              onClick={handleAddToWishlist}
+              disabled={!inStock}
+              sx={{ py: 1.5 }}
             >
               Wishlist
             </Button>
@@ -300,54 +332,35 @@ const ProductDetail = ({ addToCart }) => {
 
           <Divider sx={{ mb: 3 }} />
 
-          <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-              <LocalShipping fontSize="small" sx={{ mr: 1 }} />
+          <Box sx={{ mb: 3 }}>
+            <Box
+              sx={{ display: "flex", alignItems: "center", mb: 1.5 }}
+            >
+              <LocalShipping sx={{ mr: 1.5, color: "text.secondary" }} />
               <Typography variant="body2">
-                Free shipping on orders over ₹3,500
+                Free shipping on orders over $100
               </Typography>
             </Box>
-
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Cached fontSize="small" sx={{ mr: 1 }} />
-              <Typography variant="body2">30-day easy returns</Typography>
+              <Cached sx={{ mr: 1.5, color: "text.secondary" }} />
+              <Typography variant="body2">
+                Free 30-day returns and exchanges
+              </Typography>
             </Box>
           </Box>
         </Grid>
       </Grid>
 
-      <Typography
-        variant="h4"
-        component="h2"
-        textAlign="center"
-        gutterBottom
-        fontWeight="bold"
-        sx={{
-          my: 5,
-          position: "relative",
-        }}
-      >
-        You May Also Like
-      </Typography>
+      <Box sx={{ mt: 8, mb: 4 }}>
+        <Typography variant="h5" component="h2" sx={{ mb: 3 }}>
+          You May Also Like
+        </Typography>
+        <ProductList products={relatedProducts} addToCart={addToCart} addToWishlist={addToWishlist} />
+      </Box>
 
-      <ProductList
-        products={relatedProducts}
-        title=""
-        addToCart={addToCart}
-        totalProducts={relatedProducts.length}
-      />
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          Product added to cart!
+      <Snackbar open={openSnackbar} autoHideDuration={3000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </Container>
