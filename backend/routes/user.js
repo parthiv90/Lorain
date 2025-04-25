@@ -243,15 +243,18 @@ router.delete('/wishlist/:productId', authMiddleware, async (req, res) => {
 // Create order
 router.post('/orders', authMiddleware, async (req, res) => {
   try {
+    console.log('Order request received with data:', req.body);
     const { products, totalAmount, shippingAddress, paymentMethod } = req.body;
     const user = req.user;
     
     if (!products || !products.length || !totalAmount) {
+      console.log('Invalid order data:', { products, totalAmount });
       return res.status(400).json({ message: 'Invalid order data' });
     }
     
     // Generate a unique order ID
     const orderId = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+    console.log('Generated order ID:', orderId);
     
     // Create new order
     const newOrder = {
@@ -261,8 +264,11 @@ router.post('/orders', authMiddleware, async (req, res) => {
       orderDate: new Date(),
       status: 'Processing',
       shippingAddress,
-      paymentMethod
+      paymentMethod: paymentMethod || 'Cash on Delivery'
     };
+    
+    console.log('Created new order object:', newOrder);
+    console.log('User email:', user.email);
     
     // Add to order history
     user.orderHistory.push(newOrder);
@@ -271,6 +277,23 @@ router.post('/orders', authMiddleware, async (req, res) => {
     user.cart = [];
     
     await user.save();
+    console.log('User data saved with new order');
+    
+    // Send order confirmation email
+    try {
+      console.log('Attempting to send order confirmation email');
+      const emailService = require('../services/emailService');
+      const emailResult = await emailService.sendOrderConfirmationEmail(
+        user.email,
+        user.name || `${user.firstName} ${user.lastName}`,
+        newOrder
+      );
+      
+      console.log('Email sending result:', emailResult);
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+      // Don't fail the order if email fails
+    }
     
     res.status(201).json({ 
       message: 'Order created successfully',
@@ -278,7 +301,7 @@ router.post('/orders', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error('Create order error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
 
@@ -292,6 +315,39 @@ router.get('/orders', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error('Get orders error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Change user password
+router.post('/change-password', authMiddleware, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = req.user;
+    
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+    
+    // Import bcrypt
+    const bcrypt = require('bcryptjs');
+    
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+    
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update user password
+    user.password = hashedPassword;
+    await user.save();
+    
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Change password error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

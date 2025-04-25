@@ -65,7 +65,7 @@ const Home = ({ addToCart, addToWishlist }) => {
                   <LocalShipping color="primary" sx={{ fontSize: 40, mb: 2 }} />
                   <Typography variant="h6" gutterBottom sx={{ fontFamily: '"Bodoni Moda", serif', letterSpacing: '0.5px' }}>Free Shipping</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    On orders over ₹3,500
+                    On orders over $47.00
                   </Typography>
                 </CardContent>
               </Card>

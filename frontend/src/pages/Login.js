@@ -13,16 +13,19 @@ import {
   Snackbar
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 
 const Login = ({ login }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleClickShowPassword = () => {
@@ -34,65 +37,113 @@ const Login = ({ login }) => {
     return re.test(String(email).toLowerCase());
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Reset errors
+    // Clear previous errors
     setEmailError('');
     setPasswordError('');
     setLoginError('');
     
-    // Validate email
-    if (!email) {
-      setEmailError('Email is required');
-      return;
-    } else if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address');
+    // Validate email and password
+    const newErrors = {};
+    if (!email) newErrors.email = 'Email is required';
+    else if (!validateEmail(email)) newErrors.email = 'Please enter a valid email address';
+    
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    
+    if (Object.keys(newErrors).length > 0) {
+      setEmailError(newErrors.email || '');
+      setPasswordError(newErrors.password || '');
       return;
     }
     
-    // Validate password
-    if (!password) {
-      setPasswordError('Password is required');
-      return;
-    } else if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
-      return;
-    }
+    setIsLoading(true);
+    setServerError('');
     
-    // Send login data to server
-    fetch('http://localhost:3001/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.json().then(data => {
-            throw new Error(data.message || 'Login failed');
-          });
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Successful login
-        login(data.result);
-        setOpenSnackbar(true);
-        
-        // Redirect after a short delay
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error('Login error:', error);
-        setLoginError(error.message);
+    try {
+      console.log('Attempting login with:', { email });
+      
+      const response = await fetch('http://localhost:3001/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       });
+      
+      const data = await response.json();
+      console.log('Login response:', data);
+      
+      if (response.ok) {
+        console.log('Login successful, response data:', data);
+        
+        // Handle different backend response formats
+        // Format 1: { token, user }
+        // Format 2: { result } where result contains user data with token
+        const token = data.token || (data.result && data.result.token);
+        const userData = data.user || data.result;
+        
+        if (token) {
+          // Save token to localStorage
+          localStorage.setItem('token', token);
+          console.log('Token saved to localStorage:', token.substring(0, 10) + '...');
+        } else {
+          console.error('No token in response:', data);
+          setLoginError('Authentication token not received. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+        
+        if (userData) {
+          // Ensure user data has the token
+          const userWithToken = {
+            ...userData,
+            token: token
+          };
+          
+          // Call the App's login function to update global state
+          try {
+            login(userWithToken);
+            console.log('Login state updated successfully with user:', userWithToken.email);
+            
+            // Show success message and prepare for redirect
+            setOpenSnackbar(true);
+          } catch (loginError) {
+            console.error('Error in login function:', loginError);
+            setLoginError('Error saving user session. Please try again.');
+            setIsLoading(false);
+            return;
+          }
+        } else {
+          console.error('No user data in response:', data);
+          setLoginError('User data not received. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Check for redirect query param
+        const params = new URLSearchParams(location.search);
+        const redirectPath = params.get('redirect');
+        
+        // Add a slight delay to ensure token is properly saved
+        setTimeout(() => {
+          console.log('Redirecting after login to:', redirectPath || '/');
+          navigate(redirectPath ? `/${redirectPath}` : '/');
+        }, 1000);
+      } else {
+        setServerError(data.message || 'Login failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setServerError('Server error. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCloseSnackbar = () => {
@@ -111,9 +162,9 @@ const Login = ({ login }) => {
           </Typography>
         </Box>
         
-        {loginError && (
+        {(loginError || serverError) && (
           <Alert severity="error" sx={{ mb: 3 }}>
-            {loginError}
+            {loginError || serverError}
           </Alert>
         )}
         
@@ -162,7 +213,7 @@ const Login = ({ login }) => {
           />
           
           <Box sx={{ textAlign: 'right', mt: 1 }}>
-            <Link href="#" variant="body2">
+            <Link component={RouterLink} to="/forgot-password" variant="body2">
               Forgot password?
             </Link>
           </Box>
@@ -171,9 +222,10 @@ const Login = ({ login }) => {
             type="submit"
             fullWidth
             variant="contained"
+            disabled={isLoading}
             sx={{ mt: 3, mb: 2, py: 1.5, textTransform: 'none', fontWeight: 'bold' }}
           >
-            Login
+            {isLoading ? 'Signing in...' : 'Login'}
           </Button>
           
           <Box sx={{ textAlign: 'center', mt: 2 }}>

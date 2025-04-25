@@ -230,6 +230,11 @@ const OTPVerification = () => {
         )}
         
         <Box sx={{ my: 4 }}>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
           <Stack 
             direction="row" 
             spacing={1} 
@@ -266,13 +271,11 @@ const OTPVerification = () => {
               />
             ))}
           </Stack>
-          
           <Box sx={{ textAlign: 'center', my: 2 }}>
             <Typography variant="body2" color="text.secondary">
               Time remaining: {formatTime(countdown)}
             </Typography>
           </Box>
-          
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
             <Button
               variant="outlined"
@@ -282,7 +285,6 @@ const OTPVerification = () => {
             >
               Resend Code
             </Button>
-            
             <Button
               variant="contained"
               onClick={verifyOtp}

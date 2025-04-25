@@ -18,6 +18,9 @@ import OTPVerification from './pages/OTPVerification';
 import Profile from './pages/Profile';
 import About from './pages/About';
 import Wishlist from './pages/Wishlist';
+import Checkout from './pages/Checkout';
+// import ForgotPassword from './pages/ForgotPassword'; // Forgot password functionality removed
+import ResetPassword from './pages/ResetPassword';
 
 // Create a theme
 const theme = createTheme({
@@ -224,6 +227,7 @@ function App() {
     
     // If no authenticated user or no token, load cart and wishlist from general localStorage
     loadGuestCartAndWishlist();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Helper function to load guest cart and wishlist data
@@ -551,15 +555,26 @@ function App() {
     const currentCart = [...cart];
     const currentWishlist = [...wishlist];
     
+    // Get token from localStorage if it exists - this ensures we're using the most recent token
+    const storedToken = localStorage.getItem('token');
+    
     // Create a user object with minimal data
     const cleanUserData = {
-      id: userData.id || Math.floor(Math.random() * 1000), // Provide a random ID if none exists
+      id: userData.id || Math.floor(Math.random() * 1000),
       email: userData.email || '',
       firstName: userData.firstName || '',
       lastName: userData.lastName || '',
       name: userData.name || (userData.firstName && userData.lastName ? `${userData.firstName} ${userData.lastName}` : 'User'),
-      token: userData.token || 'dev_token_' + Date.now() // Create a dev token if none exists
+      // Prioritize token from: 1) userData.token 2) localStorage token 3) fallback
+      token: userData.token || storedToken || null
     };
+    
+    // If we still don't have a token at this point, log a warning
+    if (!cleanUserData.token) {
+      console.warn('No authentication token available after login');
+    } else {
+      console.log("Authentication token received and saved:", cleanUserData.token.substring(0, 10) + '...');
+    }
     
     console.log("Cleaned user data:", cleanUserData);
     
@@ -1230,6 +1245,8 @@ function App() {
                     updateCartItemQuantity={updateCartItemQuantity} 
                     removeFromCart={removeFromCart} 
                     moveToWishlist={addToWishlist}
+                    setCart={setCart}
+                    user={user}
                   />
                 } 
               />
@@ -1245,6 +1262,8 @@ function App() {
               <Route path="/login" element={<Login login={login} />} />
               <Route path="/register" element={<Register register={register} />} />
               <Route path="/verify-otp" element={<OTPVerification />} />
+              {/* Forgot password route removed */}
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route 
                 path="/profile" 
                 element={
@@ -1261,6 +1280,11 @@ function App() {
                 } 
               />
               <Route path="/about" element={<About />} />
+              <Route path="/checkout" element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              } />
             </Routes>
           </main>
           <Footer />

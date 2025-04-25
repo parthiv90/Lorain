@@ -118,7 +118,7 @@ const About = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Box
                 component="img"
-                src="./About/CEO.jpg"
+                src="https://images.pexels.com/photos/7845221/pexels-photo-7845221.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                 alt="CEO Portrait"
                 sx={{
                   width: '200px',
@@ -129,13 +129,13 @@ const About = () => {
                 }}
               />
               <Typography variant="h5" component="h3" fontWeight="bold">
-                Parthiv Thummar
+              James Carte
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
                 Founder & CEO
               </Typography>
               <Typography variant="body2">
-                With over 15 years of experience in the fashion industry, Parthiv leads our team with vision and passion.
+                With over 15 years of experience in the fashion industry, James leads our team with vision and passion.
               </Typography>
             </Box>
           </Grid>
@@ -143,7 +143,7 @@ const About = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Box
                 component="img"
-                src="./About/ParthAbout.jpg"
+                src="https://images.pexels.com/photos/5491144/pexels-photo-5491144.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                 alt="Lead Designer Portrait"
                 sx={{
                   width: '200px',
@@ -154,13 +154,13 @@ const About = () => {
                 }}
               />
               <Typography variant="h5" component="h3" fontWeight="bold">
-                Parth Thummar
+              Victoria Lane
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
                 Lead Designer
               </Typography>
               <Typography variant="body2">
-                Parth brings creative flair and innovative design thinking to each collection, pushing boundaries while maintaining wearability.
+                Victoria brings creative flair and innovative design thinking to each collection, pushing boundaries while maintaining wearability.
               </Typography>
             </Box>
           </Grid>
@@ -168,7 +168,7 @@ const About = () => {
             <Box sx={{ textAlign: 'center' }}>
               <Box
                 component="img"
-                src="./About/Param.jpg"
+                src="https://images.pexels.com/photos/6274712/pexels-photo-6274712.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                 alt="Operations Portrait"
                 sx={{
                   width: '200px',
@@ -179,13 +179,13 @@ const About = () => {
                 }}
               />
               <Typography variant="h5" component="h3" fontWeight="bold">
-                Param Thummar
+              William Blake
               </Typography>
               <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 1 }}>
                 Head of Operations
               </Typography>
               <Typography variant="body2">
-                Param ensures our production processes run smoothly and ethically, maintaining quality while minimizing environmental impact.
+              William ensures our production processes run smoothly and ethically, maintaining quality while minimizing environmental impact.
               </Typography>
             </Box>
           </Grid>

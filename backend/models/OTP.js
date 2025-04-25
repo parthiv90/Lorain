@@ -9,6 +9,11 @@ const otpSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  purpose: {
+    type: String,
+    enum: ['registration', 'password_reset', 'login'],
+    default: 'registration'
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -16,4 +21,4 @@ const otpSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('OTP', otpSchema); 
+module.exports = mongoose.model('OTP', otpSchema);

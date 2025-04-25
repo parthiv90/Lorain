@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Container, 
   Box, 
@@ -22,7 +23,8 @@ import {
   CardMedia,
   CardActions,
   IconButton,
-  Chip
+  Chip,
+  CircularProgress
 } from '@mui/material';
 import { 
   Person, 
@@ -34,13 +36,18 @@ import {
   Edit,
   Save,
   Delete,
-  AddShoppingCart
+  AddShoppingCart,
+  Refresh as RefreshIcon,
+  Sync as SyncIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishlist }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(0);
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || 0);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [userData, setUserData] = useState({
     name: user?.name || 'Demo User',
@@ -48,6 +55,12 @@ const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishl
     phone: '+91 98765 43210',
     address: '123 Fashion Street, Adajan, Surat, Gujarat 395009'
   });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [addresses, setAddresses] = useState([
     {
       id: 1,
@@ -68,14 +81,77 @@ const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishl
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
+  // Fetch user orders when component mounts
+  useEffect(() => {
+    if (user && user.id) {
+      fetchUserOrders();
+    }
+  }, [user]);
+
   // If no user is logged in, redirect to login
   if (!user) {
     navigate('/login');
     return null;
   }
+  
+  // Fetch user orders
+  const fetchUserOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      // Get dynamic API URL with port fallbacks
+      const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:3001'
+        : 'https://your-production-api-url.com';
+      
+      // Try to fetch orders
+      const fetchFromUrl = async (baseUrl) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Authentication required');
+        
+        const response = await fetch(`${baseUrl}/user/orders`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch orders');
+        
+        const data = await response.json();
+        return data.orderHistory || [];
+      };
+      
+      let orders;
+      try {
+        console.log('Fetching orders from primary API URL...');
+        orders = await fetchFromUrl(apiUrl);
+      } catch (error) {
+        console.log('Primary API attempt failed, trying fallback port');
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          orders = await fetchFromUrl('http://localhost:30011');
+        } else {
+          throw error;
+        }
+      }
+      
+      console.log('Fetched orders:', orders);
+      setOrderHistory(orders);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setSnackbarMessage('Failed to load order history. Please try again.');
+      setOpenSnackbar(true);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
 
+  // Handle tab change
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
+    
+    // Refresh orders when switching to orders tab
+    if (newValue === 1 && user) {
+      fetchUserOrders();
+    }
   };
 
   const handleEditToggle = () => {
@@ -104,6 +180,110 @@ const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishl
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+  };
+
+  const handleChangePassword = async () => {
+    try {
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('You are not logged in. Please log in and try again.');
+      }
+      
+      // Use the dynamically determined API base URL with port fallbacks
+      // This will try multiple ports if one fails
+      let apiUrl;
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Try port 3001 first (default), but have fallbacks ready
+        apiUrl = 'http://localhost:3001';
+      } else {
+        // Production environment
+        apiUrl = 'https://your-production-api-url.com';
+      }
+      
+      console.log('Attempting to change password using API URL:', `${apiUrl}/user/change-password`);
+      console.log('Token available:', !!token);
+      
+      // Try to make API call to primary port
+      try {
+        console.log('Attempting password change with primary API URL:', apiUrl);
+        return await tryPasswordChange(apiUrl, token);
+      } catch (error) {
+        console.log('Primary API attempt failed:', error.message);
+        
+        // If primary port fails, try fallback port
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.log('Trying fallback API URL with port 30011...');
+          try {
+            return await tryPasswordChange('http://localhost:30011', token);
+          } catch (fallbackError) {
+            console.error('Fallback API attempt also failed:', fallbackError.message);
+            throw new Error('Unable to connect to the server. Please try again later.');
+          }
+        } else {
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error('Password change error:', error);
+      setSnackbarMessage(error.message || 'Failed to update password. Please try again.');
+      setOpenSnackbar(true);
+    }
+  };
+  
+  // Helper function to try password change with a specific API URL
+  const tryPasswordChange = async (baseUrl, token) => {
+    // Make API call to update password
+    const response = await fetch(`${baseUrl}/user/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+      
+      console.log('Password change response status:', response.status);
+      
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        // If not JSON, get the text for debugging
+        const text = await response.text();
+        console.error('Received non-JSON response:', text);
+        throw new Error('Server returned an invalid response format. Please try again later.');
+      }
+      
+      const data = await response.json();
+      console.log('Password change response data:', data);
+      
+      // Handle error responses
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update password');
+      }
+      
+      // Clear form and show success message
+      setShowPasswordForm(false);
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setSnackbarMessage('Password updated successfully! Please use your new password next time you log in.');
+      setOpenSnackbar(true);
+    // Success case is handled by the calling function
+    setShowPasswordForm(false);
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setSnackbarMessage('Password updated successfully! Please use your new password next time you log in.');
+    setOpenSnackbar(true);
+    return true;
   };
 
   // Handle product click to navigate to product details
@@ -291,15 +471,83 @@ const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishl
                 variant="outlined" 
                 color="primary" 
                 sx={{ mr: 2, mb: { xs: 2, sm: 0 } }}
+                onClick={() => setShowPasswordForm(true)}
               >
                 Change Password
               </Button>
-              <Button 
-                variant="outlined" 
-                color="secondary"
-              >
-                Two-Factor Authentication
-              </Button>
+              
+              {showPasswordForm && (
+                <Box sx={{ mt: 3, border: '1px solid #e0e0e0', borderRadius: 1, p: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Change Password
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        type="password"
+                        label="Current Password"
+                        name="currentPassword"
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                        margin="normal"
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        type="password"
+                        label="New Password"
+                        name="newPassword"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                        margin="normal"
+                        required
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        type="password"
+                        label="Confirm New Password"
+                        name="confirmPassword"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                        margin="normal"
+                        required
+                        error={passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== ''}
+                        helperText={passwordData.newPassword !== passwordData.confirmPassword && passwordData.confirmPassword !== '' ? 'Passwords do not match' : ''}
+                      />
+                    </Grid>
+                  </Grid>
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3 }}>
+                    <Button 
+                      sx={{ mr: 2 }}
+                      onClick={() => {
+                        setShowPasswordForm(false);
+                        setPasswordData({
+                          currentPassword: '',
+                          newPassword: '',
+                          confirmPassword: ''
+                        });
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      variant="contained"
+                      disabled={!passwordData.currentPassword || !passwordData.newPassword || 
+                                !passwordData.confirmPassword || 
+                                passwordData.newPassword !== passwordData.confirmPassword}
+                      onClick={handleChangePassword}
+                    >
+                      Update Password
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+
             </CardContent>
           </Card>
         </Grid>
@@ -307,55 +555,179 @@ const Profile = ({ user, logout, cart, wishlist, removeFromCart, removeFromWishl
     </Box>
   );
 
-  const renderOrdersTab = () => (
-    <Box>
-      <Typography variant="h6" gutterBottom>
-        Your Orders
-      </Typography>
-      <Divider sx={{ mb: 3 }} />
-      
-      {user.orderHistory && user.orderHistory.length > 0 ? (
-        <Grid container spacing={3}>
-          {user.orderHistory.map((order) => (
-            <Grid item xs={12} key={order.orderId}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Order #{order.orderId}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Date: {new Date(order.orderDate).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Status: {order.status}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total: ${order.totalAmount.toFixed(2)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      ) : (
-        <Box sx={{ textAlign: 'center', py: 5 }}>
-          <ShoppingBag sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-          <Typography variant="h6" gutterBottom>
-            No orders yet
-          </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
-            When you place an order, it will appear here.
-          </Typography>
-          <Button 
-            variant="contained" 
-            onClick={() => navigate('/')}
-          >
-            Start Shopping
-          </Button>
-        </Box>
-      )}
-    </Box>
-  );
+  const renderOrdersTab = () => {
+    // Display price in dollars directly
+    const formatPrice = (amount) => {
+      return amount.toFixed(2);
+    };
+
+    return (
+      <Box>
+        <Typography variant="h6" gutterBottom>
+          Your Orders
+        </Typography>
+        <Divider sx={{ mb: 3 }} />
+        
+        {loadingOrders ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : orderHistory && orderHistory.length > 0 ? (
+          <Grid container spacing={3}>
+            {orderHistory.map((order) => {
+              // Format the order date
+              const orderDate = new Date(order.orderDate);
+              const formattedDate = orderDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
+              
+              // Calculate total items
+              const totalItems = order.products.reduce((sum, product) => sum + product.quantity, 0);
+              
+              return (
+                <Grid item xs={12} key={order.orderId}>
+                  <Card sx={{ mb: 2 }}>
+                    <CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                        <Box>
+                          <Typography variant="h6" gutterBottom>
+                            Order #{order.orderId}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Placed on {formattedDate}
+                          </Typography>
+                        </Box>
+                        <Chip 
+                          label={order.status} 
+                          color={order.status === 'Delivered' ? 'success' : order.status === 'Processing' ? 'primary' : 'default'}
+                          sx={{ fontWeight: 500 }}
+                        />
+                      </Box>
+                      
+                      <Divider sx={{ my: 2 }} />
+                      
+                      <Grid container spacing={2}>
+                        {/* Order Items */}
+                        <Grid item xs={12} md={8}>
+                          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                            Order Items ({totalItems})
+                          </Typography>
+                          
+                          <Box sx={{ maxHeight: '300px', overflow: 'auto', pr: 1 }}>
+                            {order.products.map((product, idx) => (
+                              <Card key={`${product.id}-${idx}`} sx={{ mb: 1, boxShadow: 'none', border: '1px solid #eee' }}>
+                                <Box sx={{ display: 'flex', p: 2 }}>
+                                  <CardMedia
+                                    component="img"
+                                    sx={{ width: 70, height: 70, objectFit: 'cover' }}
+                                    image={product.image}
+                                    alt={product.name}
+                                  />
+                                  <Box sx={{ ml: 2, flex: 1 }}>
+                                    <Typography variant="subtitle2">{product.name}</Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                      {product.selectedSize && `Size: ${product.selectedSize}`}
+                                      {product.selectedColor && `, Color: ${product.selectedColor}`}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                                      <Typography variant="body2">Qty: {product.quantity}</Typography>
+                                      <Typography variant="body2" fontWeight="bold">
+                                        ${formatPrice(product.price * product.quantity)}
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                </Box>
+                              </Card>
+                            ))}
+                          </Box>
+                        </Grid>
+                        
+                        {/* Order Summary */}
+                        <Grid item xs={12} md={4}>
+                          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 600 }}>
+                            Order Summary
+                          </Typography>
+                          
+                          <Card sx={{ p: 2, bgcolor: '#f9f9f9' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                              <Typography variant="body2">Items Total:</Typography>
+                              <Typography variant="body2">${formatPrice(order.totalAmount - 250)}</Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                              <Typography variant="body2">Shipping:</Typography>
+                              <Typography variant="body2">${formatPrice(250)}</Typography>
+                            </Box>
+                            <Divider sx={{ my: 1 }} />
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold' }}>
+                              <Typography variant="subtitle2">Total:</Typography>
+                              <Typography variant="subtitle2">${formatPrice(order.totalAmount)}</Typography>
+                            </Box>
+                            
+                            <Box sx={{ mt: 2, pt: 2, borderTop: '1px dashed #ddd' }}>
+                              <Typography variant="body2" gutterBottom>
+                                <strong>Payment Method:</strong> {order.paymentMethod}
+                              </Typography>
+                              <Typography variant="body2" gutterBottom>
+                                <strong>Shipping Address:</strong>
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>
+                                {order.shippingAddress?.fullName}<br />
+                                {order.shippingAddress?.addressLine1}
+                                {order.shippingAddress?.addressLine2 && `, ${order.shippingAddress.addressLine2}`}<br />
+                                {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.postalCode}<br />
+                                {order.shippingAddress?.country}<br />
+                                Phone: {order.shippingAddress?.phone}
+                              </Typography>
+                            </Box>
+                          </Card>
+                          
+                          <Button 
+                            fullWidth 
+                            variant="outlined" 
+                            sx={{ mt: 2 }}
+                            startIcon={<ShoppingBag />}
+                          >
+                            Buy Again
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid>
+        ) : (
+          <Box sx={{ textAlign: 'center', py: 5 }}>
+            <ShoppingBag sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              No orders yet
+            </Typography>
+            <Typography variant="body2" color="text.secondary" paragraph>
+              When you place an order, it will appear here.
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+              <Button 
+                variant="contained" 
+                onClick={() => navigate('/')}
+              >
+                Start Shopping
+              </Button>
+              <Button 
+                variant="outlined" 
+                onClick={fetchUserOrders}
+                startIcon={<RefreshIcon />}
+              >
+                Refresh Orders
+              </Button>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    );
+  };
 
   const renderWishlistTab = () => (
     <Box>
